@@ -19,13 +19,33 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score ,classification_report, confusion_matrix , f1_score
 import joblib 
-
+import string
 from pylab import rcParams
 import warnings
+nlp = spacy.load('en_core_web_sm')
+punct = string.punctuation
+stopwords = list(STOP_WORDS)
+def text_data_cleaning(sentence):
+    doc = nlp(sentence)
+    
+    tokens = []
+    for token in doc:
+        if token.lemma_ != "-PRON-":
+            temp = token.lemma_.lower().strip()
+        else:
+            temp = token.lower_
+        tokens.append(temp)
+    
+    cleaned_tokens = []
+    for token in tokens:
+        if token not in stopwords and token not in punct:
+            cleaned_tokens.append(token)
+    return set(cleaned_tokens)
 st.title("welcome to our project's website")
 st.sidebar.text_input("insert the link of the store in yelp", key="URL")
 st.sidebar.text_input("insert the link of the store in amazon", key="URL")
 f=open("linearSVC.pkl",'rb')
 mod1=pickle.load(f)
-#x=mod1.predict(["this is a good place"])
-#st.write(x)
+x=mod1.predict(["this is a good place"])
+
+st.write(x)
